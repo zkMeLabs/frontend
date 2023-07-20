@@ -28,6 +28,8 @@ export default function useMixpanelInit() {
     };
     const isAuth = Boolean(cookies.get(cookies.NAMES.API_TOKEN));
     const userId = getGoogleAnalyticsClientId();
+    // eslint-disable-next-line no-console
+    console.log('userId', userId);
 
     mixpanel.init(appConfig.mixpanel.projectToken, config);
     mixpanel.register({

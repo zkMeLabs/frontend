@@ -95,6 +95,7 @@
     "@types/csp-dev": "^1.0.0",
     "@types/d3": "^7.4.0",
     "@types/dom-to-image": "^2.6.4",
+    "@types/google.analytics": "^0.0.42",
     "@types/jest": "^29.2.0",
     "@types/js-cookie": "^3.0.2",
     "@types/mixpanel-browser": "^2.38.1",

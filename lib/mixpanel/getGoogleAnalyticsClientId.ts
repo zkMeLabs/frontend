@@ -1,3 +1,9 @@
 export default function getGoogleAnalyticsClientId() {
-  return window.ga?.getAll()[0].get('clientId');
+  let id;
+  if (window.ga) {
+    window.ga(function() {
+      id = window.ga?.getAll()[0].get('clientId');
+    });
+  }
+  return id;
 }

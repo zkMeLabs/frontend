@@ -1,3 +1,4 @@
+import type { ga } from 'google.analytics';
 import type { WindowProvider } from 'wagmi';
 
 type CPreferences = {
@@ -10,9 +11,7 @@ declare global {
   export interface Window {
     ethereum?: WindowProvider;
     coinzilla_display: Array<CPreferences>;
-    ga?: {
-      getAll: () => Array<{ get: (prop: string) => string }>;
-    };
+    ga?: ga;
     AdButler: {
       ads: Array<unknown>;
       register: (...args: unknown) => void;

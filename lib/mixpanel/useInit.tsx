@@ -11,10 +11,14 @@ import getQueryParamString from 'lib/router/getQueryParamString';
 
 import getGoogleAnalyticsClientId from './getGoogleAnalyticsClientId';
 
-export default function useMixpanelInit() {
+export default async function useMixpanelInit() {
   const [ isInited, setIsInited ] = React.useState(false);
   const router = useRouter();
   const debugFlagQuery = React.useRef(getQueryParamString(router.query._mixpanel_debug));
+
+  const userId = await getGoogleAnalyticsClientId();
+  // eslint-disable-next-line no-console
+  console.log('userId', userId);
 
   React.useEffect(() => {
     if (!appConfig.mixpanel.projectToken) {
@@ -27,9 +31,6 @@ export default function useMixpanelInit() {
       debug: Boolean(debugFlagQuery.current || debugFlagCookie),
     };
     const isAuth = Boolean(cookies.get(cookies.NAMES.API_TOKEN));
-    const userId = getGoogleAnalyticsClientId();
-    // eslint-disable-next-line no-console
-    console.log('userId', userId);
 
     mixpanel.init(appConfig.mixpanel.projectToken, config);
     mixpanel.register({
@@ -48,7 +49,7 @@ export default function useMixpanelInit() {
     if (debugFlagQuery.current && !debugFlagCookie) {
       cookies.set(cookies.NAMES.MIXPANEL_DEBUG, 'true');
     }
-  }, []);
+  }, [ userId ]);
 
   return isInited;
 }

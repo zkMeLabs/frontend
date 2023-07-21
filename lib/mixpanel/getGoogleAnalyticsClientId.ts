@@ -1,9 +1,16 @@
-export default function getGoogleAnalyticsClientId() {
-  let id;
-  if (window.ga) {
-    window.ga(function() {
-      id = window.ga?.getAll()[0].get('clientId');
-    });
+function isLoaded() {
+  if (typeof window.ga?.getAll === 'function') {
+    // eslint-disable-next-line no-console
+    console.log('loaded');
+    return true;
+  } else {
+    // eslint-disable-next-line no-console
+    console.log('not loaded');
+    setTimeout(isLoaded, 500);
   }
-  return id;
+}
+
+export default async function getGoogleAnalyticsClientId() {
+  await isLoaded();
+  return window.ga?.getAll()[0].get('clientId');
 }

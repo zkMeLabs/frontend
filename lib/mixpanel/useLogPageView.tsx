@@ -10,12 +10,14 @@ import getTabName from './getTabName';
 import logEvent from './logEvent';
 import { EventTypes } from './utils';
 
-export default function useLogPageView(isInited: boolean) {
+export default async function useLogPageView(isInitedPromise: Promise<boolean>) {
   const router = useRouter();
   const pathname = usePathname();
 
   const tab = getQueryParamString(router.query.tab);
   const page = getQueryParamString(router.query.page);
+
+  const isInited = await isInitedPromise;
 
   React.useEffect(() => {
     if (!appConfig.mixpanel.projectToken || !isInited) {

@@ -6,6 +6,7 @@ import config from 'configs/app';
 import getNetworkTitle from 'lib/networks/getNetworkTitle';
 
 import compileValue from './compileValue';
+import getPageOgType from './getPageOgType';
 import * as templates from './templates';
 
 export default function generate<R extends Route>(route: R, apiData?: ApiData<R>): Metadata {
@@ -19,8 +20,15 @@ export default function generate<R extends Route>(route: R, apiData?: ApiData<R>
   const title = compileValue(templates.title.make(route.pathname), params);
   const description = compileValue(templates.description.make(route.pathname), params);
 
+  const pageOgType = getPageOgType(route.pathname);
+
   return {
-    title,
+    title: title + ' | Blockscout',
     description,
+    opengraph: {
+      title: title + (config.opengraph.promoteBlockscout ? ' | Blockscout' : ''),
+      description: pageOgType === 'Homepage' ? config.opengraph.description : '',
+      imageUrl: pageOgType !== 'Regular page' ? config.opengraph.ogImageUrl : '',
+    },
   };
 }

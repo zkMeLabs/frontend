@@ -130,3 +130,7 @@ frontend:
       _default: ref+vault://deployment-values/blockscout/common?token_env=VAULT_TOKEN&address=https://vault.k8s.blockscout.com#/NEXT_PUBLIC_FAVICON_GENERATOR_API_KEY
     NEXT_PUBLIC_WEB3_WALLETS:
       _default: "['token_pocket','coinbase','metamask']"
+    NEXT_PUBLIC_AD_BANNER_PROVIDER:
+      _default: custom
+    NEXT_PUBLIC_AD_CUSTOM_CONFIG_URL: 
+      _default: https://raw.githubusercontent.com/blockscout/frontend/test-custom-ad/test/test.json

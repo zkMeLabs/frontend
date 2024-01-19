@@ -21,6 +21,7 @@ import UserOpEntity from 'ui/shared/entities/userOp/UserOpEntity';
 import UserOpsAddress from 'ui/shared/userOps/UserOpsAddress';
 import UserOpSponsorType from 'ui/shared/userOps/UserOpSponsorType';
 import UserOpStatus from 'ui/shared/userOps/UserOpStatus';
+import Utilization from 'ui/shared/Utilization/Utilization';
 
 interface Props {
   query: UseQueryResult<UserOp, ResourceError>;
@@ -131,6 +132,21 @@ const UserOpDetails = ({ query }: Props) => {
         <Skeleton isLoaded={ !isPlaceholderData }>
           { BigNumber(data.gas).toFormat() }
         </Skeleton>
+      </DetailsInfoItem>
+      <DetailsInfoItem
+        title="Gas used"
+        hint="Actual gas amount used by the the User operation"
+        isLoading={ isPlaceholderData }
+      >
+        <Skeleton isLoaded={ !isPlaceholderData }>
+          { BigNumber(data.gas_used).toFormat() }
+        </Skeleton>
+        <Utilization
+          ml={ 4 }
+          colorScheme="gray"
+          value={ BigNumber(data.gas_used).dividedBy(BigNumber(data.gas)).toNumber() }
+          isLoading={ isPlaceholderData }
+        />
       </DetailsInfoItem>
       <DetailsInfoItem
         title="Transaction hash"

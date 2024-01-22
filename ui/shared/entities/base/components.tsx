@@ -113,7 +113,7 @@ export interface ContentBaseProps extends Pick<EntityBaseProps, 'className' | 'i
   text: string;
 }
 
-const Content = chakra(({ className, isLoading, asProp, text, truncation = 'dynamic', tailLength }: ContentBaseProps) => {
+const Content = chakra(({ className, isLoading, asProp, text, truncation = 'dynamic' }: ContentBaseProps) => {
 
   const children = (() => {
     switch (truncation) {
@@ -129,7 +129,7 @@ const Content = chakra(({ className, isLoading, asProp, text, truncation = 'dyna
           <HashStringShortenDynamic
             hash={ text }
             as={ asProp }
-            tailLength={ tailLength }
+            // tailLength={ tailLength }
           />
         );
       case 'none':

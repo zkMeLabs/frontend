@@ -1,5 +1,5 @@
 import type { As } from '@chakra-ui/react';
-import { Box, Flex, Skeleton, Tooltip, chakra, VStack, useColorModeValue } from '@chakra-ui/react';
+import { Box, Skeleton, Tooltip, chakra, VStack, useColorModeValue } from '@chakra-ui/react';
 import _omit from 'lodash/omit';
 import React from 'react';
 
@@ -11,7 +11,7 @@ import { useAddressHighlightContext } from 'lib/contexts/addressHighlight';
 import * as EntityBase from 'ui/shared/entities/base/components';
 
 import { getIconProps } from '../base/utils';
-import AddressIdenticon from './AddressIdenticon';
+// import AddressIdenticon from './AddressIdenticon';
 
 type LinkProps = EntityBase.LinkBaseProps & Pick<EntityProps, 'address'>;
 
@@ -46,54 +46,54 @@ const Icon = (props: IconProps) => {
     return <Skeleton { ...styles } borderRadius="full" flexShrink={ 0 }/>;
   }
 
-  if (props.address.is_contract) {
-    if (props.isSafeAddress) {
-      return (
-        <EntityBase.Icon
-          { ...props }
-          name="brands/safe"
-        />
-      );
-    }
+  // if (props.address.is_contract) {
+  //   if (props.isSafeAddress) {
+  //     return (
+  //       <EntityBase.Icon
+  //         { ...props }
+  //         name="brands/safe"
+  //       />
+  //     );
+  //   }
 
-    if (props.address.is_verified) {
-      return (
-        <Tooltip label="Verified contract">
-          <span>
-            <EntityBase.Icon
-              { ...props }
-              name="contract_verified"
-              color="green.500"
-              borderRadius={ 0 }
-            />
-          </span>
-        </Tooltip>
-      );
-    }
-
-    return (
-      <Tooltip label="Contract">
-        <span>
-          <EntityBase.Icon
-            { ...props }
-            name="contract"
-            borderRadius={ 0 }
-          />
-        </span>
-      </Tooltip>
-    );
-  }
+  //   if (props.address.is_verified) {
+  //     return (
+  //       <Tooltip label="Verified contract">
+  //         <span>
+  //           <EntityBase.Icon
+  //             { ...props }
+  //             name="contract_verified"
+  //             color="green.500"
+  //             borderRadius={ 0 }
+  //           />
+  //         </span>
+  //       </Tooltip>
+  //     );
+  //   }
 
   return (
-    <Tooltip label={ props.address.implementation_name }>
-      <Flex marginRight={ styles.marginRight }>
-        <AddressIdenticon
-          size={ props.iconSize === 'lg' ? 30 : 20 }
-          hash={ props.address.hash }
+    <Tooltip label="Contract">
+      <span>
+        <EntityBase.Icon
+          { ...props }
+          name="contract"
+          borderRadius={ 0 }
         />
-      </Flex>
+      </span>
     </Tooltip>
   );
+  // }
+
+  // return (
+  //   <Tooltip label={ props.address.implementation_name }>
+  //     <Flex marginRight={ styles.marginRight }>
+  //       <AddressIdenticon
+  //         size={ props.iconSize === 'lg' ? 30 : 20 }
+  //         hash={ props.address.hash }
+  //       />
+  //     </Flex>
+  //   </Tooltip>
+  // );
 };
 
 type ContentProps = Omit<EntityBase.ContentBaseProps, 'text'> & Pick<EntityProps, 'address'>;

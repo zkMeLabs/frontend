@@ -9,7 +9,6 @@ import { AddressHighlightProvider } from 'lib/contexts/addressHighlight';
 import useLazyRenderedList from 'lib/hooks/useLazyRenderedList';
 import { currencyUnits } from 'lib/units';
 import IconSvg from 'ui/shared/IconSvg';
-import * as SocketNewItemsNotice from 'ui/shared/SocketNewItemsNotice';
 import TheadSticky from 'ui/shared/TheadSticky';
 
 import TxsTableItem from './TxsTableItem';
@@ -34,9 +33,6 @@ const TxsTable = ({
   sorting,
   top,
   showBlockInfo,
-  showSocketInfo,
-  socketInfoAlert,
-  socketInfoNum,
   currentAddress,
   enableTimeIncrement,
   isLoading,
@@ -75,14 +71,6 @@ const TxsTable = ({
           </Tr>
         </TheadSticky>
         <Tbody>
-          { showSocketInfo && (
-            <SocketNewItemsNotice.Desktop
-              url={ window.location.href }
-              alert={ socketInfoAlert }
-              num={ socketInfoNum }
-              isLoading={ isLoading }
-            />
-          ) }
           <AnimatePresence initial={ false }>
             { txs.slice(0, renderedItemsNum).map((item, index) => (
               <TxsTableItem

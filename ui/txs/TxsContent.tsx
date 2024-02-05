@@ -1,4 +1,3 @@
-import { Show, Hide } from '@chakra-ui/react';
 import React from 'react';
 
 import type { AddressFromToFilter } from 'types/api/address';
@@ -11,7 +10,6 @@ import type { QueryWithPagesResult } from 'ui/shared/pagination/useQueryWithPage
 import getNextSortValue from 'ui/shared/sort/getNextSortValue';
 
 import TxsHeaderMobile from './TxsHeaderMobile';
-import TxsList from './TxsList';
 import TxsTable from './TxsTable';
 
 const SORT_SEQUENCE: Record<TransactionsSortingField, Array<TransactionsSortingValue | undefined>> = {
@@ -63,35 +61,19 @@ const TxsContent = ({
   }, [ sort, setSorting ]);
 
   const content = items ? (
-    <>
-      <Show below="lg" ssr={ false }>
-        <TxsList
-          showBlockInfo={ showBlockInfo }
-          showSocketInfo={ showSocketInfo }
-          socketInfoAlert={ socketInfoAlert }
-          socketInfoNum={ socketInfoNum }
-          isLoading={ isPlaceholderData }
-          enableTimeIncrement={ enableTimeIncrement }
-          currentAddress={ currentAddress }
-          items={ items }
-        />
-      </Show>
-      <Hide below="lg" ssr={ false }>
-        <TxsTable
-          txs={ items }
-          sort={ onSortToggle }
-          sorting={ sort }
-          showBlockInfo={ showBlockInfo }
-          showSocketInfo={ showSocketInfo }
-          socketInfoAlert={ socketInfoAlert }
-          socketInfoNum={ socketInfoNum }
-          top={ top || query.pagination.isVisible ? 80 : 0 }
-          currentAddress={ currentAddress }
-          enableTimeIncrement={ enableTimeIncrement }
-          isLoading={ isPlaceholderData }
-        />
-      </Hide>
-    </>
+    <TxsTable
+      txs={ items }
+      sort={ onSortToggle }
+      sorting={ sort }
+      showBlockInfo={ showBlockInfo }
+      showSocketInfo={ showSocketInfo }
+      socketInfoAlert={ socketInfoAlert }
+      socketInfoNum={ socketInfoNum }
+      top={ top || query.pagination.isVisible ? 80 : 0 }
+      currentAddress={ currentAddress }
+      enableTimeIncrement={ enableTimeIncrement }
+      isLoading={ isPlaceholderData }
+    />
   ) : null;
 
   const actionBar = isMobile ? (

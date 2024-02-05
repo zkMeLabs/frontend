@@ -30,6 +30,7 @@ const Transactions = () => {
     resourceName: router.query.tab === 'pending' ? 'txs_pending' : 'txs_validated',
     filters: { filter: router.query.tab === 'pending' ? 'pending' : 'validated' },
     options: {
+      refetchOnMount: false,
       enabled: !router.query.tab || router.query.tab === 'validated' || router.query.tab === 'pending',
       placeholderData: generateListStub<'txs_validated'>(TX, 50, { next_page_params: {
         block_number: 9005713,
@@ -43,6 +44,7 @@ const Transactions = () => {
   const txsWatchlistQuery = useQueryWithPages({
     resourceName: 'txs_watchlist',
     options: {
+      refetchOnMount: false,
       enabled: router.query.tab === 'watchlist',
       placeholderData: generateListStub<'txs_watchlist'>(TX, 50, { next_page_params: {
         block_number: 9005713,

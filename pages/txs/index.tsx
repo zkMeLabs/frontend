@@ -1,10 +1,10 @@
 import type { NextPage } from 'next';
-import dynamic from 'next/dynamic';
 import React from 'react';
 
 import PageNextJs from 'nextjs/PageNextJs';
 
-const Transactions = dynamic(() => import('ui/pages/Transactions'), { ssr: false });
+// const Transactions = dynamic(() => import('ui/pages/Transactions'), { ssr: false });
+import Transactions from 'ui/pages/Transactions';
 
 const Page: NextPage = () => {
   return (

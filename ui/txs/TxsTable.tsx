@@ -1,16 +1,11 @@
-import { Link, Table, Tbody, Tr, Th } from '@chakra-ui/react';
+import { Thead, Table, Tbody, Tr, Th } from '@chakra-ui/react';
 import { AnimatePresence } from 'framer-motion';
 import React from 'react';
 
 import type { Transaction, TransactionsSortingField, TransactionsSortingValue } from 'types/api/transaction';
 
-import config from 'configs/app';
 import { AddressHighlightProvider } from 'lib/contexts/addressHighlight';
 import useLazyRenderedList from 'lib/hooks/useLazyRenderedList';
-import { currencyUnits } from 'lib/units';
-import IconSvg from 'ui/shared/IconSvg';
-import * as SocketNewItemsNotice from 'ui/shared/SocketNewItemsNotice';
-import TheadSticky from 'ui/shared/TheadSticky';
 
 import TxsTableItem from './TxsTableItem';
 
@@ -30,13 +25,8 @@ type Props = {
 
 const TxsTable = ({
   txs,
-  sort,
-  sorting,
   top,
   showBlockInfo,
-  showSocketInfo,
-  socketInfoAlert,
-  socketInfoNum,
   currentAddress,
   enableTimeIncrement,
   isLoading,
@@ -46,7 +36,7 @@ const TxsTable = ({
   return (
     <AddressHighlightProvider>
       <Table variant="simple" minWidth="950px" size="xs">
-        <TheadSticky top={ top }>
+        <Thead top={ top }>
           <Tr>
             <Th width="54px"></Th>
             <Th width="22%">Txn hash</Th>
@@ -54,35 +44,11 @@ const TxsTable = ({
             <Th width="20%">Method</Th>
             { showBlockInfo && <Th width="18%">Block</Th> }
             <Th width={{ base: '224px', xl: '360px' }}>From/To</Th>
-            { !config.UI.views.tx.hiddenFields?.value && (
-              <Th width="20%" isNumeric>
-                <Link onClick={ sort('value') } display="flex" justifyContent="end">
-                  { sorting === 'value-asc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(-90deg)"/> }
-                  { sorting === 'value-desc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(90deg)"/> }
-                  { `Value ${ currencyUnits.ether }` }
-                </Link>
-              </Th>
-            ) }
-            { !config.UI.views.tx.hiddenFields?.tx_fee && (
-              <Th width="20%" isNumeric pr={ 5 }>
-                <Link onClick={ sort('fee') } display="flex" justifyContent="end">
-                  { sorting === 'fee-asc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(-90deg)"/> }
-                  { sorting === 'fee-desc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(90deg)"/> }
-                  { `Fee${ config.UI.views.tx.hiddenFields?.fee_currency ? '' : ` ${ currencyUnits.ether }` }` }
-                </Link>
-              </Th>
-            ) }
+            <Th width="20%" isNumeric>Value</Th>
+            <Th width="20%" isNumeric pr={ 5 }>Fee</Th>
           </Tr>
-        </TheadSticky>
+        </Thead>
         <Tbody>
-          { showSocketInfo && (
-            <SocketNewItemsNotice.Desktop
-              url={ window.location.href }
-              alert={ socketInfoAlert }
-              num={ socketInfoNum }
-              isLoading={ isLoading }
-            />
-          ) }
           <AnimatePresence initial={ false }>
             { txs.slice(0, renderedItemsNum).map((item, index) => (
               <TxsTableItem

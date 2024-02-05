@@ -72,7 +72,7 @@ const TxnBatchesListItem = ({ item, isLoading }: Props) => {
               hash={ hash }
               fontSize="sm"
               lineHeight={ 5 }
-              maxW="100%"
+              truncation="constant_long"
             />
           )) }
         </VStack>

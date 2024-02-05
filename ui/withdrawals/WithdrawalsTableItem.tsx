@@ -37,6 +37,7 @@ const WithdrawalsTableItem = ({ item, view, isLoading }: Props) => {
             isLoading={ isLoading }
             fontSize="sm"
             lineHeight={ 5 }
+            noIcon
           />
         </Td>
       ) }

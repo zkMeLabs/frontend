@@ -1,20 +1,45 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-restricted-imports */
+
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { debounce, orderBy } from 'lodash';
+import BigNumber from 'bignumber.js';
+import debounce from 'lodash/debounce';
+import orderBy from 'lodash/orderBy';
 import type { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
-import type { ObjetTalbeListType, ObjetRequestType } from 'types/storage';
+// import type { ObjetTalbeListType, ObjetRequestType } from 'types/storage';
 
 import PageNextJs from 'nextjs/PageNextJs';
 
-import useGraphqlQuery from 'lib/api/useGraphqlQuery';
-// import PageTitle from 'ui/shared/Page/PageTitle';
-import { sizeTool, filtersName } from 'ui/storage/utils';
+import { getEnvValue } from 'configs/app/utils';
+// import { truncateString } from 'ui/storage/utils';
 
 const TableList = dynamic(() => import('ui/storage/table-list'), { ssr: false });
+type RequestType = {
+  has_more: boolean;
+  title_data: Array<{
+    block_number: number;
+    credential_id: string;
+    from_address: string;
+    to_address: string;
+    transaction_status: string;
+    tx_fee: string;
+    tx_hash: string;
+    tx_time: string;
+    tx_value: string;
+  }>;
+};
+type IssuanceTalbeListType = {
+  'Credential ID': string;
+  'Txn hash': string;
+  Block: string;
+  Method: string;
+  'From/To': [ string, string ];
+  Time: string;
+  'Value MOCA': string;
+  'Fee MOCA': string;
+};
 const ObjectDetails: NextPage = () => {
   const [ queryParams, setQueryParams ] = React.useState<{ offset: number; searchTerm: string; page: number }>({
     offset: 0,
@@ -48,116 +73,9 @@ const ObjectDetails: NextPage = () => {
     });
   }, []);
 
-  const [ queries, setQueries ] = React.useState<Array<any>>([
-    {
-      tableName: 'objects',
-      fields: [
-        'object_id',
-        'object_name',
-        'content_type',
-        'payload_size',
-        'status',
-        'visibility',
-        'update_time',
-        'bucket_name',
-        'creator_address',
-      ],
-      where: {
-        removed: { _eq: false },
-      },
-      order: { update_time: 'desc' },
-      limit: 21,
-      offset: 0,
-      distinctOn: 'object_id',
-    },
-    {
-      tableName: 'objects_aggregate',
-      where: {
-        removed: { _eq: false },
-      },
-      distinctOn: 'object_id',
-      aggregate: [
-        'count',
-      ],
-    },
-  ]);
+  const [ tableList, setTableList ] = React.useState<Array<IssuanceTalbeListType>>([]);
 
-  React.useEffect(() => {
-    setQueries([
-      {
-        tableName: 'objects',
-        fields: [
-          'object_id',
-          'object_name',
-          'content_type',
-          'payload_size',
-          'status',
-          'visibility',
-          'update_time',
-          'bucket_name',
-          'creator_address',
-        ],
-        where: queryParams.searchTerm ? {
-          _or: [
-            { object_name: { _ilike: `${ queryParams.searchTerm }%` } },
-            { object_id: { _eq: queryParams.searchTerm.toString() } },
-          ],
-          _and: [
-            { removed: { _eq: false } },
-          ],
-        } : { removed: { _eq: false } },
-        // order: { update_time: 'desc' },
-        order: { object_id: 'desc' },
-        limit: 21,
-        offset: queryParams.offset,
-        distinctOn: 'object_id',
-      },
-      {
-        tableName: 'objects_aggregate',
-        where: queryParams.searchTerm ? {
-          _or: [
-            { object_name: { _ilike: `${ queryParams.searchTerm }%` } },
-            { object_id: { _eq: queryParams.searchTerm.toString() } },
-          ],
-          _and: [
-            { removed: { _eq: false } },
-          ],
-        } : { removed: { _eq: false } },
-        distinctOn: 'object_id',
-        aggregate: [
-          'count',
-        ],
-      },
-    ]);
-  }, [ queryParams ]);
-
-  const tableList: Array<ObjetTalbeListType> = [];
-  const { loading, data, error } = useGraphqlQuery('Objects', queries);
-  const tableLength = data?.objects?.length || 0;
-  const totleDate = data?.objects_aggregate?.aggregate?.count || 0;
-  orderBy(data?.objects?.slice(0, 20), [ 'update_time' ], [ 'desc' ]).forEach((v: ObjetRequestType) => {
-    tableList.push({
-      'Object Name': v.object_name,
-      Type: v.content_type,
-      'Object Size': sizeTool(v.payload_size),
-      Status: v.status,
-      Visibility: filtersName(v.visibility),
-      'Last Updated Time': v.update_time,
-      Bucket: v.bucket_name,
-      Creator: v.creator_address,
-      id: v.object_id,
-    });
-  });
-
-  React.useEffect(() => {
-    if (typeof tableLength === 'number' && tableLength !== 21) {
-      setToNext(false);
-    } else {
-      setToNext(true);
-    }
-  }, [ tableLength ]);
-
-  const tabThead = [ 'Object Name', 'Type', 'Object Size', 'Status', 'Visibility', 'Last Updated Time', 'Bucket', 'Creator' ];
+  const tabThead = [ 'Credential ID', 'Txn hash', 'Block', 'Method', 'From/To', 'Time', 'Value MOCA', 'Fee MOCA' ];
 
   const debouncedHandleSearchChange = React.useMemo(
     () => debounce((event: React.ChangeEvent<HTMLInputElement> | null) => {
@@ -174,24 +92,90 @@ const ObjectDetails: NextPage = () => {
           offset: 0,
         });
       }
-    }, 300), // Adjust the debounce delay as needed (300ms in this case)
-    [], // Dependencies array is empty because the debounce function itself is memoized
+    }, 300),
+    [],
   );
+  const url = getEnvValue('NEXT_PUBLIC_CREDENTIAL_API_HOST');
+  const [ totalIssued, setTotalIssued ] = React.useState<number>(0);
+  const [ totalCredential, setTotalCredential ] = React.useState<number>(0);
+  const [ tableLength, setTableLength ] = React.useState<number>(0);
+  const [ loading, setLoading ] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (typeof tableLength === 'number' && tableLength !== 51) {
+      setToNext(false);
+    } else {
+      setToNext(true);
+    }
+  }, [ tableLength ]);
 
   const handleSearchChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement> | null) => {
     debouncedHandleSearchChange(event);
   }, [ debouncedHandleSearchChange ]);
+
+  function truncateToSignificantDigits(numberStr: string, significantDigits: number) {
+    const num = new BigNumber(numberStr);
+    if (num.isZero()) return num;
+
+    const exponent = num.e || 0;
+
+    let decimalPlaces;
+    if (num.abs().isLessThan(1)) {
+      decimalPlaces = Math.abs(exponent) + significantDigits - 1;
+    } else {
+      const integerDigits = exponent + 1;
+      decimalPlaces = Math.max(significantDigits - integerDigits, 0);
+    }
+
+    return num.decimalPlaces(decimalPlaces, BigNumber.ROUND_DOWN);
+  }
+
+  const request = React.useCallback(async() => {
+    try {
+      setLoading(true);
+      const rp1 = await (await fetch(url + '/api/v1/explorer/issuancestitle', { method: 'get' })).json() as RequestType;
+      const rp2 = await (await fetch(url + '/api/v1/explorer/totalissuancesinfo', { method: 'get' })).json() as {
+        total_credential_number: number; total_issued_number: number;
+      };
+      const tableList: Array<IssuanceTalbeListType> = [];
+      orderBy(rp1.title_data, [ 'transaction_status' ]).forEach((v: any) => {
+        tableList.push({
+          'Credential ID': v.credential_id || '/',
+          'Txn hash': v.tx_hash,
+          Block: v.block_number,
+          Method: v.method,
+          'From/To': [ v.from_address, v.to_address ],
+          Time: v.tx_time,
+          'Value MOCA': v.tx_value,
+          'Fee MOCA': truncateToSignificantDigits(BigNumber(v.tx_fee / 1e18).toString(10), 3).toString(10),
+        });
+      });
+      setTableLength(rp1.title_data.length);
+      setTableList(tableList);
+      setLoading(false);
+      setTotalIssued(rp2.total_credential_number);
+      setTotalCredential(rp2.total_issued_number);
+    } catch (error: any) {
+      throw Error(error);
+    }
+  }, [ url ]);
+
+  React.useEffect(() => {
+    if (url) {
+      request();
+    }
+  }, [ request, url ]);
 
   return (
     <PageNextJs pathname="/object">
       <Flex justifyContent="space-between" textAlign="left" margin="24px 0">
         <Box width="48%" border="solid 1px rgba(0, 0, 0, 0.06)" borderRadius="12px" display="grid" gridGap="8px" padding="16px">
           <Text>Total Issued Number</Text>
-          <Text>156,476</Text>
+          <Text>{ Number(new Intl.NumberFormat('en-US').format(totalIssued)) || '-' }</Text>
         </Box>
         <Box width="48%" border="solid 1px rgba(0, 0, 0, 0.06)" borderRadius="12px" display="grid" gridGap="18px" padding="16px">
-          <Text>Total Issued Number</Text>
-          <Text>1,006</Text>
+          <Text>Total Credential Number</Text>
+          <Text>{ Number(new Intl.NumberFormat('en-US').format(totalCredential)) || '-' }</Text>
         </Box>
       </Flex>
       <Flex>
@@ -207,16 +191,15 @@ const ObjectDetails: NextPage = () => {
         </Box>
       </Flex>
       <TableList
+        totleDate={ 0 }
         showTotal={ true }
-        totleDate={ totleDate }
         toNext={ toNext }
         currPage={ queryParams.page }
         propsPage={ propsPage }
-        error={ error }
         loading={ loading }
-        tableList={ orderBy(tableList, [ 'update_time' ], [ 'desc' ]) }
+        tableList={ tableList }
         tabThead={ tabThead }
-        page="object"
+        page="Issuance"
         handleSearchChange={ handleSearchChange }
       />
     </PageNextJs>

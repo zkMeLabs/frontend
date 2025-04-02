@@ -402,11 +402,14 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
             </DetailsInfoItem.Label>
             <DetailsInfoItem.Value>
               <Box bg={ credentialStatusColor } color="#FFFFFF" padding="4px 8px" borderRadius="24px">
-                <IconSvg
-                  name={ data.result.charAt(0).toUpperCase() + data.result.slice(1) }
-                  boxSize={ 4 } color={ executionSuccessIconColor }
-                  cursor="pointer"
-                />
+                {
+                  data?.result && (
+                    <IconSvg
+                      name={ data.result.charAt(0).toUpperCase() + data.result.slice(1) }
+                      boxSize={ 4 } color={ executionSuccessIconColor }
+                      cursor="pointer"
+                    />
+                  ) }
                 { data.result.charAt(0).toUpperCase() + data.result.slice(1) }
               </Box>
             </DetailsInfoItem.Value>

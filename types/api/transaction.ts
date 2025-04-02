@@ -25,6 +25,8 @@ export interface OpWithdrawal {
 }
 
 export type Transaction = {
+  credential_id?: string;
+  credential_status?: string;
   to: AddressParam | null;
   created_contract: AddressParam | null;
   hash: string;

@@ -2,7 +2,7 @@
 
 import { Box, Flex, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
-import debounce from 'lodash/debounce';
+// import debounce from 'lodash/debounce';
 import orderBy from 'lodash/orderBy';
 import type { NextPage } from 'next';
 import dynamic from 'next/dynamic';
@@ -13,10 +13,12 @@ import React from 'react';
 import PageNextJs from 'nextjs/PageNextJs';
 
 import { getEnvValue } from 'configs/app/utils';
+import LinkInternal from 'ui/shared/links/LinkInternal';
 // import { truncateString } from 'ui/storage/utils';
 
 const TableList = dynamic(() => import('ui/storage/table-list'), { ssr: false });
 type RequestType = {
+  has_next: boolean;
   has_more: boolean;
   title_data: Array<{
     block_number: number;
@@ -55,63 +57,56 @@ const ObjectDetails: NextPage = () => {
   };
 
   const [ toNext, setToNext ] = React.useState<boolean>(true);
-  React.useEffect(() => {
-    if (queryParams.page > 1) {
-      updateQueryParams({
-        offset: (queryParams.page - 1) * 20,
-      });
-    } else {
-      updateQueryParams({
-        offset: 0,
-      });
-    }
-  }, [ queryParams.page ]);
-
-  const propsPage = React.useCallback((value: number) => {
-    updateQueryParams({
-      page: value,
-    });
-  }, []);
+  // React.useEffect(() => {
+  //   if (queryParams.page > 1) {
+  //     updateQueryParams({
+  //       offset: (queryParams.page - 1) * 20,
+  //     });
+  //   } else {
+  //     updateQueryParams({
+  //       offset: 0,
+  //     });
+  //   }
+  // }, [ queryParams.page ]);
 
   const [ tableList, setTableList ] = React.useState<Array<IssuanceTalbeListType>>([]);
 
   const tabThead = [ 'Credential ID', 'Txn hash', 'Block', 'Method', 'From/To', 'Time', 'Value MOCA', 'Fee MOCA' ];
 
-  const debouncedHandleSearchChange = React.useMemo(
-    () => debounce((event: React.ChangeEvent<HTMLInputElement> | null) => {
-      if (!event) {
-        updateQueryParams({
-          searchTerm: '',
-          offset: 0,
-          page: 1,
-        });
-      } else {
-        updateQueryParams({
-          searchTerm: event.target.value,
-          page: 1,
-          offset: 0,
-        });
-      }
-    }, 300),
-    [],
-  );
+  // const debouncedHandleSearchChange = React.useMemo(
+  //   () => debounce((event: React.ChangeEvent<HTMLInputElement> | null) => {
+  //     if (!event) {
+  //       updateQueryParams({
+  //         searchTerm: '',
+  //         offset: 0,
+  //         page: 1,
+  //       });
+  //     } else {
+  //       console.log(tableList);
+  //       updateQueryParams({
+  //         searchTerm: event.target.value,
+  //         page: 1,
+  //         offset: 0,
+  //       });
+  //     }
+  //   }, 300),
+  //   [ tableList ],
+  // );
   const url = getEnvValue('NEXT_PUBLIC_CREDENTIAL_API_HOST');
   const [ totalIssued, setTotalIssued ] = React.useState<number>(0);
   const [ totalCredential, setTotalCredential ] = React.useState<number>(0);
-  const [ tableLength, setTableLength ] = React.useState<number>(0);
+  // const [ tableLength, setTableLength ] = React.useState<number>(0);
   const [ loading, setLoading ] = React.useState<boolean>(false);
 
-  React.useEffect(() => {
-    if (typeof tableLength === 'number' && tableLength !== 51) {
-      setToNext(false);
-    } else {
-      setToNext(true);
-    }
-  }, [ tableLength ]);
+  // React.useEffect(() => {
+  //   if (typeof tableLength === 'number' && tableLength !== 51) {
+  //     setToNext(false);
+  //   } else {
+  //     setToNext(true);
+  //   }
+  // }, [ tableLength ]);
 
-  const handleSearchChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement> | null) => {
-    debouncedHandleSearchChange(event);
-  }, [ debouncedHandleSearchChange ]);
+  const handleSearchChange = () => () => {};
 
   function truncateToSignificantDigits(numberStr: string, significantDigits: number) {
     const num = new BigNumber(numberStr);
@@ -130,13 +125,13 @@ const ObjectDetails: NextPage = () => {
     return num.decimalPlaces(decimalPlaces, BigNumber.ROUND_DOWN);
   }
 
-  const request = React.useCallback(async() => {
+  const request = React.useCallback(async(hash?: string) => {
     try {
       setLoading(true);
-      const rp1 = await (await fetch(url + '/api/v1/explorer/verificationstitle', { method: 'get' })).json() as RequestType;
-      const rp2 = await (await fetch(url + '/api/v1/explorer/totalverificationsinfo', { method: 'get' })).json() as {
-        total_credential_number: number; total_issued_number: number;
-      };
+      const rp1 = await (await fetch(url + `/api/v1/explorer/verificationstitle?cursor=${ hash }`, { method: 'get' })).json() as RequestType;
+      // const rp2 = await (await fetch(url + '/api/v1/explorer/totalissuancesinfo', { method: 'get' })).json() as {
+      //   total_credential_number: number; total_issued_number: number;
+      // };
       const tableList: Array<IssuanceTalbeListType> = [];
       orderBy(rp1.title_data, [ 'transaction_status' ]).forEach((v: any) => {
         tableList.push({
@@ -150,21 +145,50 @@ const ObjectDetails: NextPage = () => {
           'Fee MOCA': truncateToSignificantDigits(BigNumber(v.tx_fee / 1e18).toString(10), 3).toString(10),
         });
       });
-      setTableLength(rp1.title_data.length);
+      setToNext(rp1.has_next);
+      // setTableLength(rp1.title_data.length);
       setTableList(tableList);
       setLoading(false);
-      setTotalIssued(rp2.total_credential_number);
-      setTotalCredential(rp2.total_issued_number);
+      // setTotalIssued(rp2.total_credential_number);
+      // setTotalCredential(rp2.total_issued_number);
     } catch (error: any) {
+      setLoading(false);
       throw Error(error);
     }
   }, [ url ]);
 
+  const requestTotal = React.useCallback(async() => {
+    try {
+      setLoading(true);
+      const rp2 = await (await fetch(url + '/api/v1/explorer/totalverificationsinfo', { method: 'get' })).json() as {
+        total_credential_number: number; total_issued_number: number;
+      };
+      setLoading(false);
+      setTotalIssued(rp2.total_credential_number);
+      setTotalCredential(rp2.total_issued_number);
+    } catch (error: any) {
+      setLoading(false);
+      throw Error(error);
+    }
+  }, [ url ]);
+
+  const propsPage = React.useCallback((value: number) => {
+    if (value > queryParams.page) {
+      request(tableList[tableList.length - 1]['Block'] + '|' + tableList[tableList.length - 1]['Txn hash']);
+    } else {
+      request(tableList[0]['Block'] + '|' + tableList[0]['Txn hash']);
+    }
+    updateQueryParams({
+      page: value,
+    });
+  }, [ queryParams.page, request, tableList ]);
+
   React.useEffect(() => {
     if (url) {
       request();
+      requestTotal();
     }
-  }, [ request, url ]);
+  }, [ requestTotal, request, url ]);
 
   return (
     <PageNextJs pathname="/object">
@@ -185,9 +209,15 @@ const ObjectDetails: NextPage = () => {
             <path d="M8.66667 8.00001H14M8.66667 5.33334H14M8.66667 10.6667H14M4 4.66667V11.3333M4 11.3333L2
             9.33334M4 11.3333L6 9.33334" stroke="#FF57B7" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          <Text color="rgba(0, 0, 0, 0.30)" fontSize="12px" fontWeight="400" marginLeft="12px">
-            Advanced Filter
-          </Text>
+          <LinkInternal
+            color="rgba(0, 0, 0, 0.30)"
+            fontSize="12px"
+            href="/advanced-filter"
+            fontWeight="400"
+            marginLeft="12px"
+          >
+            Advanced filter
+          </LinkInternal>
         </Box>
       </Flex>
       <TableList
@@ -200,7 +230,7 @@ const ObjectDetails: NextPage = () => {
         tableList={ tableList }
         tabThead={ tabThead }
         page="Issuance"
-        handleSearchChange={ handleSearchChange }
+        handleSearchChange={ handleSearchChange() }
       />
     </PageNextJs>
   );

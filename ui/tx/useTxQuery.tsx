@@ -66,22 +66,25 @@ export default function useTxQuery(params?: Params): TxQuery {
   const { data, isError, isPlaceholderData, isPending } = queryResult;
   const request = React.useCallback(async() => {
     try {
-      const rp2 = await (await fetch(url + `/api/v1/explorer/transaction/${ hash }`, { method: 'get' })).
-        json() as { credential_id: string; credential_status: string };
+      const rp2 = await (await fetch(url + `/api/v1/explorer/transaction/${ hash }`,
+        { method: 'get' })).json() as { credential_id: string; credential_status: string };
       if (data) {
-        data.credential_id = rp2.credential_id;
-        data.credential_status = rp2.credential_status;
+        queryClient.setQueryData(getResourceKey('tx', { pathParams: { hash } }), {
+          ...data,
+          credential_id: rp2.credential_id,
+          credential_status: rp2.credential_status,
+        });
       }
     } catch (error: unknown) {
       throw new Error(String(error));
     }
-  }, [ hash, url, data ]);
+  }, [ data, hash, queryClient, url ]);
 
-  React.useEffect(() => {
-    if (router.query.tab === 'credentials' && data) {
+  (() => {
+    if (router.query.tab === 'credentials' && queryResult) {
       request();
     }
-  }, [ router, request, data ]);
+  })();
 
   const handleStatusUpdateMessage: SocketMessage.TxStatusUpdate['handler'] = React.useCallback(async() => {
     await delay(5 * SECOND);

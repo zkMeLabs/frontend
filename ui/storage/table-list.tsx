@@ -330,7 +330,7 @@ function TableList(props: Props<string>) {
                                                 ) :
                                                   value === 'From/To' ? (
                                                     <Skeleton display="flex" isLoaded={ !props.loading }>
-                                                      <NextLink href={{ pathname: '/address/[hash]', query: { hash: title[value] || '' } }}>
+                                                      <NextLink href={{ pathname: '/address/[hash]', query: { hash: title[value][0] || '' } }}>
                                                         <Box display="inline-block">
                                                           <Skeleton isLoaded={ !props.loading }>
                                                             { formatPubKey(title[value][0]) }
@@ -343,7 +343,7 @@ function TableList(props: Props<string>) {
                                                         marginLeft="4px"
                                                         color="rgba(0, 0, 0, .4)" w="16px" h="16px" name="copyAddress"/>
                                                       <Box margin="0 4px" color="#000000">/</Box>
-                                                      <NextLink href={{ pathname: '/address/[hash]', query: { hash: title[value] || '' } }}>
+                                                      <NextLink href={{ pathname: '/address/[hash]', query: { hash: title[value][1] || '' } }}>
                                                         <Box display="inline-block">
                                                           <Skeleton isLoaded={ !props.loading }>
                                                             Moca Chain

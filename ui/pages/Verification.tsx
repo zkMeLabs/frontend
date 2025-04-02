@@ -13,7 +13,7 @@ import React from 'react';
 import PageNextJs from 'nextjs/PageNextJs';
 
 import { getEnvValue } from 'configs/app/utils';
-import LinkInternal from 'ui/shared/links/LinkInternal';
+// import LinkInternal from 'ui/shared/links/LinkInternal';
 // import { truncateString } from 'ui/storage/utils';
 
 const TableList = dynamic(() => import('ui/storage/table-list'), { ssr: false });
@@ -202,7 +202,7 @@ const ObjectDetails: NextPage = () => {
           <Text>{ Number(new Intl.NumberFormat('en-US').format(totalCredential)) || '-' }</Text>
         </Box>
       </Flex>
-      <Flex>
+      { /* <Flex>
         <Box
           display="flex" padding="16px" margin="24px 0" border="1px solid rgba(0, 46, 51, 0.10)" borderRadius="30px" backdropFilter="blur(5px)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -219,7 +219,7 @@ const ObjectDetails: NextPage = () => {
             Advanced filter
           </LinkInternal>
         </Box>
-      </Flex>
+      </Flex> */ }
       <TableList
         totleDate={ 0 }
         showTotal={ true }

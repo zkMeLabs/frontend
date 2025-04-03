@@ -80,7 +80,6 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
   const [ routerTab, setRouterTab ] = React.useState(false);
   const [ credentialStatusColor, setCredentialStatus ] = React.useState('');
   const [ transactionStatusColor, setTransactionStatus ] = React.useState('');
-  const [ IconName, setIconName ] = React.useState('');
   const router = useRouter();
   React.useEffect(() => {
     if (router) {
@@ -116,20 +115,6 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
         break;
       default:
         setTransactionStatus('rgba(0, 46, 51, 0.1)');
-        break;
-    }
-    switch (data.result) {
-      case 'success':
-        setIconName('Success');
-        break;
-      case 'fail':
-        setIconName('Failed');
-        break;
-      case 'pending':
-        setIconName('Pending');
-        break;
-      default:
-        setIconName('Success');
         break;
     }
   }, [ data ]);
@@ -417,11 +402,33 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
             </DetailsInfoItem.Label>
             <DetailsInfoItem.Value>
               <Box bg={ credentialStatusColor } color="#FFFFFF" padding="4px 8px" borderRadius="24px">
-                <IconSvg
-                  name={ IconName }
-                  boxSize={ 4 } color={ executionSuccessIconColor }
-                  cursor="pointer"
-                />
+                {
+                  data.result === 'success' && (
+                    <IconSvg
+                      name="Success"
+                      boxSize={ 4 } color={ executionSuccessIconColor }
+                      cursor="pointer"
+                    />
+                  )
+                }
+                {
+                  data.result === 'failed' && (
+                    <IconSvg
+                      name="Failed"
+                      boxSize={ 4 } color={ executionSuccessIconColor }
+                      cursor="pointer"
+                    />
+                  )
+                }
+                {
+                  data.result === 'pending' && (
+                    <IconSvg
+                      name="Pending"
+                      boxSize={ 4 } color={ executionSuccessIconColor }
+                      cursor="pointer"
+                    />
+                  )
+                }
                 { data.result.charAt(0).toUpperCase() + data.result.slice(1) }
               </Box>
             </DetailsInfoItem.Value>

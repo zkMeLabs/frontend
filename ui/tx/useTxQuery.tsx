@@ -8,6 +8,7 @@ import type { SocketMessage } from 'lib/socket/types';
 import type { Transaction } from 'types/api/transaction';
 
 import config from 'configs/app';
+import { getEnvValue } from 'configs/app/utils';
 import type { ResourceError } from 'lib/api/resources';
 import useApiQuery, { getResourceKey } from 'lib/api/useApiQuery';
 import { retry } from 'lib/api/useQueryClientConfig';
@@ -42,6 +43,7 @@ export default function useTxQuery(params?: Params): TxQuery {
   const queryClient = useQueryClient();
 
   const hash = params?.hash ?? getQueryParamString(router.query.hash);
+  const url = getEnvValue('NEXT_PUBLIC_CREDENTIAL_API_HOST');
 
   const queryResult = useApiQuery<'tx', { status: number }>('tx', {
     pathParams: { hash },
@@ -62,6 +64,27 @@ export default function useTxQuery(params?: Params): TxQuery {
     },
   });
   const { data, isError, isPlaceholderData, isPending } = queryResult;
+  const request = React.useCallback(async() => {
+    try {
+      const rp2 = await (await fetch(url + `/api/v1/explorer/transaction/${ hash }`,
+        { method: 'get' })).json() as { credential_id: string; credential_status: string };
+      if (data) {
+        queryClient.setQueryData(getResourceKey('tx', { pathParams: { hash } }), {
+          ...data,
+          credential_id: rp2.credential_id,
+          credential_status: rp2.credential_status,
+        });
+      }
+    } catch (error: unknown) {
+      throw new Error(String(error));
+    }
+  }, [ data, hash, queryClient, url ]);
+
+  (() => {
+    if (router.query.tab === 'credentials' && queryResult) {
+      request();
+    }
+  })();
 
   const handleStatusUpdateMessage: SocketMessage.TxStatusUpdate['handler'] = React.useCallback(async() => {
     await delay(5 * SECOND);

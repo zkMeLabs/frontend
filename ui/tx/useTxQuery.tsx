@@ -38,6 +38,7 @@ interface Params {
 export default function useTxQuery(params?: Params): TxQuery {
   const [ socketStatus, setSocketStatus ] = React.useState<'close' | 'error'>();
   const [ isRefetchEnabled, setRefetchEnabled ] = useBoolean(false);
+  const [ requestFlag, setRequestFlag ] = React.useState(false);
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -65,6 +66,8 @@ export default function useTxQuery(params?: Params): TxQuery {
   });
   const { data, isError, isPlaceholderData, isPending } = queryResult;
   const request = React.useCallback(async() => {
+    if (requestFlag) return;
+    setRequestFlag(true);
     try {
       const rp2 = await (await fetch(url + `/api/v1/explorer/transaction/${ hash }`,
         { method: 'get' })).json() as { credential_id: string; credential_status: string };
@@ -78,13 +81,13 @@ export default function useTxQuery(params?: Params): TxQuery {
     } catch (error: unknown) {
       throw new Error(String(error));
     }
-  }, [ data, hash, queryClient, url ]);
+  }, [ data, hash, queryClient, url, setRequestFlag, requestFlag ]);
 
-  (() => {
-    if (router.query.tab === 'credentials' && queryResult) {
+  React.useEffect(() => {
+    if (router.query.tab === 'credentials' && !requestFlag) {
       request();
     }
-  })();
+  }, [ request, router.query.tab, requestFlag ]);
 
   const handleStatusUpdateMessage: SocketMessage.TxStatusUpdate['handler'] = React.useCallback(async() => {
     await delay(5 * SECOND);

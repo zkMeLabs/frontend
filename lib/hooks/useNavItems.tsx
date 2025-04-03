@@ -306,12 +306,6 @@ export default function useNavItems(): ReturnType {
 
     const mainNavItems: ReturnType['mainNavItems'] = [
       {
-        text: 'Credentials',
-        icon: 'navitems/credentials',
-        isActive: credentialsNavItems.flat().some(item => isInternalItem(item) && item.isActive),
-        subItems: credentialsNavItems,
-      },
-      {
         text: 'Explorer',
         icon: 'navitems/globe-b',
         isActive: blockchainNavItems.flat().some(item => isInternalItem(item) && item.isActive),
@@ -322,6 +316,12 @@ export default function useNavItems(): ReturnType {
         icon: 'navitems/storage',
         isActive: storageNavItems.flat().some(item => isInternalItem(item) && item.isActive),
         subItems: storageNavItems,
+      },
+      {
+        text: 'Credentials',
+        icon: 'navitems/credentials',
+        isActive: credentialsNavItems.flat().some(item => isInternalItem(item) && item.isActive),
+        subItems: credentialsNavItems,
       },
       {
         text: 'Faucet',

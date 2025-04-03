@@ -401,12 +401,15 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
               Transaction Status
             </DetailsInfoItem.Label>
             <DetailsInfoItem.Value>
-              <Box bg={ credentialStatusColor } color="#FFFFFF" padding="4px 8px" borderRadius="24px">
+              <Box display="flex" alignItems="center" bg={ credentialStatusColor } color="#FFFFFF" padding="4px 8px" borderRadius="24px">
                 {
                   data.result === 'success' && (
                     <IconSvg
+                      w="20px"
+                      h="20px"
+                      pr="2px"
                       name="Success"
-                      boxSize={ 4 } color={ executionSuccessIconColor }
+                      color={ executionSuccessIconColor }
                       cursor="pointer"
                     />
                   )
@@ -414,8 +417,11 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
                 {
                   data.result === 'failed' && (
                     <IconSvg
+                      w="20px"
+                      h="20px"
+                      pr="2px"
                       name="Failed"
-                      boxSize={ 4 } color={ executionSuccessIconColor }
+                      color={ executionSuccessIconColor }
                       cursor="pointer"
                     />
                   )
@@ -423,8 +429,11 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
                 {
                   data.result === 'pending' && (
                     <IconSvg
+                      w="20px"
+                      h="20px"
+                      pr="2px"
                       name="Pending"
-                      boxSize={ 4 } color={ executionSuccessIconColor }
+                      color={ executionSuccessIconColor }
                       cursor="pointer"
                     />
                   )

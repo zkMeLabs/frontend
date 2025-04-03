@@ -85,7 +85,9 @@ export default function useTxQuery(params?: Params): TxQuery {
 
   React.useEffect(() => {
     if (router.query.tab === 'credentials' && !requestFlag) {
-      request();
+      setTimeout(() => {
+        request();
+      }, 500);
     }
   }, [ request, router.query.tab, requestFlag ]);
 

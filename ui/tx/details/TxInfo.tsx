@@ -123,10 +123,10 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
         setIconName('Success');
         break;
       case 'fail':
-        setIconName('Fail');
+        setIconName('Failed');
         break;
-      case 'padding':
-        setIconName('Padding');
+      case 'pending':
+        setIconName('Pending');
         break;
       default:
         setIconName('Success');
@@ -417,14 +417,11 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
             </DetailsInfoItem.Label>
             <DetailsInfoItem.Value>
               <Box bg={ credentialStatusColor } color="#FFFFFF" padding="4px 8px" borderRadius="24px">
-                {
-                  data?.result && (
-                    <IconSvg
-                      name={ IconName }
-                      boxSize={ 4 } color={ executionSuccessIconColor }
-                      cursor="pointer"
-                    />
-                  ) }
+                <IconSvg
+                  name={ IconName }
+                  boxSize={ 4 } color={ executionSuccessIconColor }
+                  cursor="pointer"
+                />
                 { data.result.charAt(0).toUpperCase() + data.result.slice(1) }
               </Box>
             </DetailsInfoItem.Value>

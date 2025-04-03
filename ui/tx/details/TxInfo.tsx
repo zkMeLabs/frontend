@@ -80,6 +80,7 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
   const [ routerTab, setRouterTab ] = React.useState(false);
   const [ credentialStatusColor, setCredentialStatus ] = React.useState('');
   const [ transactionStatusColor, setTransactionStatus ] = React.useState('');
+  const [ IconName, setIconName ] = React.useState('');
   const router = useRouter();
   React.useEffect(() => {
     if (router) {
@@ -115,6 +116,20 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
         break;
       default:
         setTransactionStatus('rgba(0, 46, 51, 0.1)');
+        break;
+    }
+    switch (data.result) {
+      case 'success':
+        setIconName('Success');
+        break;
+      case 'fail':
+        setIconName('Fail');
+        break;
+      case 'padding':
+        setIconName('Padding');
+        break;
+      default:
+        setIconName('Success');
         break;
     }
   }, [ data ]);
@@ -405,7 +420,7 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
                 {
                   data?.result && (
                     <IconSvg
-                      name={ (data.result.charAt(0).toUpperCase() + data.result.slice(1)).toString() || 'Success' }
+                      name={ IconName }
                       boxSize={ 4 } color={ executionSuccessIconColor }
                       cursor="pointer"
                     />

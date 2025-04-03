@@ -405,7 +405,7 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
                 {
                   data?.result && (
                     <IconSvg
-                      name={ data.result.charAt(0).toUpperCase() + data.result.slice(1) }
+                      name={ (data.result.charAt(0).toUpperCase() + data.result.slice(1)).toString() || 'Success' }
                       boxSize={ 4 } color={ executionSuccessIconColor }
                       cursor="pointer"
                     />

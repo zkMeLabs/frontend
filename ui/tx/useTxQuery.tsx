@@ -71,7 +71,7 @@ export default function useTxQuery(params?: Params): TxQuery {
     try {
       const rp2 = await (await fetch(url + `/api/v1/explorer/transaction/${ hash }`,
         { method: 'get' })).json() as { credential_id: string; credential_status: string };
-      if (data) {
+      if (data?.hash !== TX.hash) {
         queryClient.setQueryData(getResourceKey('tx', { pathParams: { hash } }), {
           ...data,
           credential_id: rp2.credential_id,

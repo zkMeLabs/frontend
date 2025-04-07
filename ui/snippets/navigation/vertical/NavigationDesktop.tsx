@@ -40,11 +40,11 @@ const NavigationDesktop = () => {
     cookies.set(cookies.NAMES.NAV_BAR_COLLAPSED, isCollapsed ? 'false' : 'true');
   }, [ isCollapsed ]);
 
-  const handleContainerClick = React.useCallback((event: React.MouseEvent) => {
-    if (event.target === event.currentTarget) {
-      handleTogglerClick();
-    }
-  }, [ handleTogglerClick ]);
+  // const handleContainerClick = React.useCallback((event: React.MouseEvent) => {
+  //   if (event.target === event.currentTarget) {
+  //     handleTogglerClick();
+  //   }
+  // }, [ handleTogglerClick ]);
 
   const chevronIconStyles = {
     bgColor: useColorModeValue('white', 'black'),
@@ -67,7 +67,7 @@ const NavigationDesktop = () => {
       py={ 12 }
       width={{ lg: isExpanded ? '229px' : '92px', xl: isCollapsed ? '92px' : '229px' }}
       { ...getDefaultTransitionProps({ transitionProperty: 'width, padding' }) }
-      onClick={ handleContainerClick }
+      // onClick={ handleContainerClick }
     >
       <TestnetBadge position="absolute" w="49px" top="34px"/>
       <Box

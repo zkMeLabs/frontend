@@ -219,7 +219,12 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
       </DetailsInfoItem.Label>
       <DetailsInfoItem.Value>
         {
-          routerTab && data.method ? data.method.charAt(0).toUpperCase() + data.method.slice(1) :
+          routerTab && data.method ?
+            (
+              <Skeleton isLoaded={ !isLoading }>
+                { data.method.charAt(0).toUpperCase() + data.method.slice(1) }
+              </Skeleton>
+            ) :
             (
               <>
                 <TxStatus status={ data.status } errorText={ data.status === 'error' ? data.result : undefined } isLoading={ isLoading }/>
@@ -250,7 +255,9 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
               Credential ID
             </DetailsInfoItem.Label>
             <DetailsInfoItem.Value>
-              { data.credential_id }
+              <Skeleton isLoaded={ !isLoading }>
+                { data.credential_id }
+              </Skeleton>
             </DetailsInfoItem.Value>
 
             <DetailsInfoItem.Label
@@ -260,12 +267,14 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
               Credential Status
             </DetailsInfoItem.Label>
             <DetailsInfoItem.Value>
-              <Box
-                bg={ transactionStatusColor }
-                color={ data.credential_status === 'Expired' || data.credential_status === 'REMOVE' ? '#000000' : '#FFFFFF' }
-                padding="4px 8px" borderRadius="24px">
-                { data.credential_status }
-              </Box>
+              <Skeleton isLoaded={ !isLoading }>
+                <Box
+                  bg={ transactionStatusColor }
+                  color={ data.credential_status === 'Expired' || data.credential_status === 'REMOVE' ? '#000000' : '#FFFFFF' }
+                  padding="4px 8px" borderRadius="24px">
+                  { data.credential_status }
+                </Box>
+              </Skeleton>
             </DetailsInfoItem.Value>
           </>
         )
@@ -401,45 +410,47 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
               Transaction Status
             </DetailsInfoItem.Label>
             <DetailsInfoItem.Value>
-              <Box display="flex" alignItems="center" bg={ credentialStatusColor } color="#FFFFFF" padding="4px 8px" borderRadius="24px">
-                {
-                  data.result === 'success' && (
-                    <IconSvg
-                      w="20px"
-                      h="20px"
-                      pr="2px"
-                      name="Success"
-                      color={ executionSuccessIconColor }
-                      cursor="pointer"
-                    />
-                  )
-                }
-                {
-                  data.result === 'failed' && (
-                    <IconSvg
-                      w="20px"
-                      h="20px"
-                      pr="2px"
-                      name="Failed"
-                      color={ executionSuccessIconColor }
-                      cursor="pointer"
-                    />
-                  )
-                }
-                {
-                  data.result === 'pending' && (
-                    <IconSvg
-                      w="20px"
-                      h="20px"
-                      pr="2px"
-                      name="Pending"
-                      color={ executionSuccessIconColor }
-                      cursor="pointer"
-                    />
-                  )
-                }
-                { data.result.charAt(0).toUpperCase() + data.result.slice(1) }
-              </Box>
+              <Skeleton isLoaded={ !isLoading }>
+                <Box display="flex" alignItems="center" bg={ credentialStatusColor } color="#FFFFFF" padding="4px 8px" borderRadius="24px">
+                  {
+                    data.result === 'success' && (
+                      <IconSvg
+                        w="20px"
+                        h="20px"
+                        pr="2px"
+                        name="Success"
+                        color={ executionSuccessIconColor }
+                        cursor="pointer"
+                      />
+                    )
+                  }
+                  {
+                    data.result === 'failed' && (
+                      <IconSvg
+                        w="20px"
+                        h="20px"
+                        pr="2px"
+                        name="Failed"
+                        color={ executionSuccessIconColor }
+                        cursor="pointer"
+                      />
+                    )
+                  }
+                  {
+                    data.result === 'pending' && (
+                      <IconSvg
+                        w="20px"
+                        h="20px"
+                        pr="2px"
+                        name="Pending"
+                        color={ executionSuccessIconColor }
+                        cursor="pointer"
+                      />
+                    )
+                  }
+                  { data.result.charAt(0).toUpperCase() + data.result.slice(1) }
+                </Box>
+              </Skeleton>
             </DetailsInfoItem.Value>
           </>
         )

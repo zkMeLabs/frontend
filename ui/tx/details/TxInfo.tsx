@@ -570,6 +570,7 @@ const TxInfo = ({ data, isLoading, socketStatus }: Props) => {
           address={ data.from }
           isLoading={ isLoading }
         />
+        { routerTab ? 'To' : '' }
         {
           (toAddress) && (
             <AddressEntity

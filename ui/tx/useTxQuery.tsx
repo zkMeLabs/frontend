@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import type { SocketMessage } from 'lib/socket/types';
-import type { Transaction } from 'types/api/transaction';
+import type { Transaction, ExplorerTransaction, ExplorerTransactionDetail } from 'types/api/transaction';
 
 import config from 'configs/app';
 import { getEnvValue } from 'configs/app/utils';
@@ -69,19 +69,64 @@ export default function useTxQuery(params?: Params): TxQuery {
     if (requestFlag) return;
     setRequestFlag(true);
     try {
-      const rp2 = await (await fetch(url + `/api/v1/explorer/transaction/${ hash }`,
-        { method: 'get' })).json() as { credential_id: string; credential_status: string };
-      if (data?.hash !== TX.hash) {
-        queryClient.setQueryData(getResourceKey('tx', { pathParams: { hash } }), {
+      const rp1 = await (await fetch(url + `/api/v1/explorer/transaction/${ hash }`,
+        { method: 'get' })).json() as ExplorerTransaction;
+      const rp2 = await (await fetch(url + `/api/v1/explorer/transaction/${ hash }/detail`,
+        { method: 'get' })).json() as ExplorerTransactionDetail;
+      if (data?.hash !== TX.hash && !isError) {
+        queryClient?.setQueryData(getResourceKey('tx', { pathParams: { hash } }), {
           ...data,
-          credential_id: rp2.credential_id,
-          credential_status: rp2.credential_status,
+          credential_id: rp1.credential_id,
+          credential_status: rp1.credential_status,
+        });
+      } else if (data?.hash !== TX.hash && isError) {
+        queryClient?.setQueryData(getResourceKey('tx', { pathParams: { hash } }), {
+          ...TX,
+          hash: rp1.tx_hash,
+          method: rp1.method,
+          credential_id: rp1.credential_id,
+          credential_status: rp1.credential_status,
+          block_number: rp1.block_number,
+          transaction_status: rp1.transaction_status,
+          from: {
+            ...TX.from,
+            hash: rp1.from_address,
+          },
+          to: {
+            ...TX.to,
+            hash: rp1.to_address,
+            name: 'MOCA Chain',
+          },
+          fee: {
+            value: rp1.tx_fee,
+          },
+          timestamp: rp1.tx_time,
+          value: rp1.tx_value,
+          // blob_gas_used: rp1.tx_value,
+          gas_price: rp1.gas_price,
+          gas_used: rp1.gas_used,
+          gas_limit: rp1.gas_limit,
+          base_fee_per_gas: rp1.gas_base,
+          max_fee_per_gas: rp1.max_fee_per_gas,
+          max_priority_fee_per_gas: rp1.max_priority_fee_per_gas,
+          type: Number(rp2.tx_type.slice(0, 1)),
+          nonce: rp2.nonce,
+          position: rp2.transaction_index,
+          raw_input: rp2.raw_input,
+          zilliqa: {
+            is_scilla: false,
+          },
+          decoded_input: {
+            method_call: rp2.fn_signature,
+            method_id: rp2.method_id,
+            parameters: JSON.parse(rp2.fn_params),
+          },
         });
       }
     } catch (error: unknown) {
       throw new Error(String(error));
     }
-  }, [ data, hash, queryClient, url, setRequestFlag, requestFlag ]);
+  }, [ requestFlag, url, hash, data, isError, queryClient ]);
 
   React.useEffect(() => {
     if (router.query.tab === 'credentials' && !requestFlag) {
@@ -105,12 +150,13 @@ export default function useTxQuery(params?: Params): TxQuery {
   const handleSocketError = React.useCallback(() => {
     setSocketStatus('error');
   }, []);
+  const locationHrefFlag = location.href.includes('localhost') || location.href.includes('testint');
 
   const channel = useSocketChannel({
     topic: `transactions:${ hash }`,
     onSocketClose: handleSocketClose,
     onSocketError: handleSocketError,
-    isDisabled: isPending || isPlaceholderData || isError || data.status !== null,
+    isDisabled: (isPending || isPlaceholderData || isError || data.status !== null) && !locationHrefFlag,
   });
   useSocketMessage({
     channel,

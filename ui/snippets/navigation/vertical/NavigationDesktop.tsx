@@ -2,7 +2,7 @@ import { Flex, Box, VStack, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 
 import config from 'configs/app';
-import { useAppContext } from 'lib/contexts/app';
+// import { useAppContext } from 'lib/contexts/app';
 import * as cookies from 'lib/cookies';
 import useNavItems, { isGroupItem } from 'lib/hooks/useNavItems';
 import getDefaultTransitionProps from 'theme/utils/getDefaultTransitionProps';
@@ -17,23 +17,23 @@ import NavLinkGroup from './NavLinkGroup';
 import NavLinkRewards from './NavLinkRewards';
 
 const NavigationDesktop = () => {
-  const appProps = useAppContext();
-  const cookiesString = appProps.cookies;
+  // const appProps = useAppContext();
+  // const cookiesString = appProps.cookies;
 
-  const isNavBarCollapsedCookie = cookies.get(cookies.NAMES.NAV_BAR_COLLAPSED, cookiesString);
-  let isNavBarCollapsed;
-  if (isNavBarCollapsedCookie === 'true') {
-    isNavBarCollapsed = true;
-  }
-  if (isNavBarCollapsedCookie === 'false') {
-    isNavBarCollapsed = false;
-  }
+  // const isNavBarCollapsedCookie = cookies.get(cookies.NAMES.NAV_BAR_COLLAPSED, cookiesString);
+  // let isNavBarCollapsed;
+  // if (isNavBarCollapsedCookie === 'true') {
+  //   isNavBarCollapsed = true;
+  // }
+  // if (isNavBarCollapsedCookie === 'false') {
+  //   isNavBarCollapsed = false;
+  // }
 
   const { mainNavItems, accountNavItems } = useNavItems();
 
   const isAuth = useIsAuth();
 
-  const [ isCollapsed, setCollapsedState ] = React.useState<boolean | undefined>(isNavBarCollapsed);
+  const [ isCollapsed, setCollapsedState ] = React.useState<boolean | undefined>(false);
 
   const handleTogglerClick = React.useCallback(() => {
     setCollapsedState((flag) => !flag);

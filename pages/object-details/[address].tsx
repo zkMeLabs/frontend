@@ -133,13 +133,34 @@ const ObjectDetails: NextPage<Props> = (props: Props) => {
       tip: 'Available for sealed object',
     },
   };
-  const secondaryAddresses: Array<string> | undefined = [];
-  const tabsList = [ 'Transactions', 'Versions' ];
-  const tableList = [
+  const queries2 = [
     {
-      'Txn Hash': '',
+      tableName: 'object_events',
+      fields: [
+        'object_id',
+        'event',
+        'evm_tx_hash',
+        'height',
+      ],
+      where: { object_id: { _eq: router.query.address } },
     },
   ];
+  const rpEvents = useGraphqlQuery('Objects', router.query.address ? queries2 : []);
+  const secondaryAddresses: Array<string> | undefined = [];
+  const tabsList = [ 'Transactions' ];
+  const tabThead = [ 'Txn Hash', 'Block', 'Age', 'Type' ];;
+  const tableList = [] as Array<{ 'Txn Hash': string; Block: string; Age: string; Type: string }>;
+
+  if (rpEvents.data?.object_events.length) {
+    rpEvents.data.object_events.forEach((v: { evm_tx_hash: string; height: number; event: string }) => {
+      tableList.push({
+        'Txn Hash': v.evm_tx_hash,
+        Block: v.height.toString(),
+        Age: '',
+        Type: v.event,
+      });
+    });
+  }
   const changeTable = React.useCallback((value: 'Transactions' | 'Versions') => {
     setTabName(value);
   }, []);
@@ -199,11 +220,12 @@ const ObjectDetails: NextPage<Props> = (props: Props) => {
         </Tooltip>
       </Flex>
       <HeadDetails loading={ loadsing } overview={ overview } more={ more } secondaryAddresses={ secondaryAddresses }/>
-      <Box display="none">
+      <Box display="block">
         <TableDetails
           changeTable={ changeTable }
           tabsList={ tabsList }
           tableList={ tableList }
+          tabThead={ tabThead }
           toNext={ toNext }
           currPage={ queryParams.page }
           propsPage={ propsPage }

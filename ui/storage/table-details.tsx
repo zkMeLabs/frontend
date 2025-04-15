@@ -36,7 +36,7 @@ interface TalbeListType {
 
 type Props<T extends string> = {
   tabsList?: Array<T> | undefined;
-  tableList?: Array<TalbeListType> | undefined;
+  tableList?: Array<TalbeListType | any> | undefined;
   tabThead?: Array<T> | undefined;
   changeTable: (value: any) => void;
   toNext: boolean;
@@ -55,7 +55,7 @@ function Page<T extends string>(props: Props<T>) {
     <TableContainer marginTop="24px" border="1px" borderRadius="12px" borderColor="rgba(0, 0, 0, 0.06);" padding="24px 0">
       <Table variant="simple">
         <Thead>
-          <Tr padding="0 24px" display="table-row">
+          <Tr p="0 24px" display="table-row">
             { props.tabsList?.map((value, key) => (
               <Th
                 key={ key }
@@ -67,7 +67,7 @@ function Page<T extends string>(props: Props<T>) {
                 color={ tapSelect === value ? '#C15E97' : 'rgba(0, 0, 0, 0.6)' }
                 fontWeight={ tapSelect === value ? '700' : '400' }
                 fontSize="16px"
-                p="0 0 10px 0"
+                p="0 0 10px 0 !important"
                 m="0 24px"
                 ml={ !key ? '24px' : '0px' }
                 bg="none"
@@ -80,7 +80,7 @@ function Page<T extends string>(props: Props<T>) {
             { props.tabThead?.map((value, index) => (
               <Th
                 key={ index }
-                p="24px"
+                p="24px !important"
                 bg="#FFFF"
                 borderTop="1px" borderBottom="1px" borderColor="rgba(0, 0, 0, 0.06)">{ value }</Th>
             )) }
@@ -97,6 +97,7 @@ function Page<T extends string>(props: Props<T>) {
                         key={ index }
                         fontWeight="500" fontSize="14px"
                         overflow="hidden"
+                        p="24px !important"
                         color={ value === 'txnHash' ? '#C15E97' : '#000000' } padding="24px"
                       >
                         {

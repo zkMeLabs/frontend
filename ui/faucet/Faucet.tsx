@@ -394,7 +394,7 @@ const Faucet = (props: { verified: boolean; onVerificationChange: (status: boole
             <AccordionPanel fontSize="12px" fontWeight="400" maxWidth="800" lineHeight="16px" color="rgba(0, 0, 0, 0.60)" pl="0" pr="0" pb="0">
               Testnet $MOCA tokens are a test version of the Moca Chain network&apos;s native token,
               allowing developers to simulate transactions and interactions
-              within the zkMe ecosystem without using real value. These tokens can be used in place of mainnet $MOCA tokens on the Moca Chain testnet.
+              within the Moca ecosystem without using real value. These tokens can be used in place of mainnet $MOCA tokens on the Moca Chain testnet.
             </AccordionPanel>
           </AccordionItem>
           <AccordionItem

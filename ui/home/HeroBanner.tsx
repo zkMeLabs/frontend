@@ -50,7 +50,7 @@ const HeroBanner = () => {
     <Flex
       w="100%"
       border={ border }
-      borderRadius="md"
+      borderRadius= {{ base: 'md', lg: '24px' }}
       p={{ base: 4, lg: 8 }}
       columnGap={ 8 }
       alignItems="center"

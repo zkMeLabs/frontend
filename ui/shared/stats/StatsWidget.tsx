@@ -51,7 +51,7 @@ const StatsWidget = ({
   period,
   href,
 }: Props) => {
-  const bgColor = '#FEF1F9';
+  const bgColor = '#F4F4F4';
   const skeletonBgColor = useColorModeValue('blackAlpha.50', 'whiteAlpha.50');
   const hintColor = useColorModeValue('gray.600', 'gray.400');
 

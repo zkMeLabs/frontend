@@ -1,3 +1,6 @@
+/* eslint-disable */
+
+
 import { InputGroup, Input, InputLeftElement, chakra, useColorModeValue, forwardRef, InputRightElement, Center } from '@chakra-ui/react';
 import throttle from 'lodash/throttle';
 import React from 'react';
@@ -150,7 +153,11 @@ const SearchBarInput = (
     >
       <InputGroup size={{ base: 'sm', lg: isHomepage ? 'sm_md' : 'sm' }} >
         <InputLeftElement w={{ base: isHomepage ? 6 : 4, lg: 6 }} ml={{ base: isHomepage ? 4 : 3, lg: 4 }} h="100%">
-          <IconSvg name="search" boxSize={{ base: isHomepage ? 6 : 4, lg: 6 }} color="#C15E97" fontSize="16px"/>
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none">
+              <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="#6C636B" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
         </InputLeftElement>
         <Input
           pl={{ base: isHomepage ? '50px' : '38px', lg: '50px' }}
@@ -166,6 +173,8 @@ const SearchBarInput = (
               paddingRight: '36px',
             },
           }}
+          _placeholder={{ color: '#B5B5B5', fontSize: '14px', fontFamily: 'Outfit' }}
+          className="search-input"
           placeholder={ isMobile ? 'Search by Block / Txn / ... ' : 'Search by Block / Txn / Address / Bucket / Object / Group... ' }
           onChange={ handleChange }
           border={ isHomepage ? 'none' : '1px solid' }

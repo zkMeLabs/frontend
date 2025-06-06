@@ -87,6 +87,18 @@
   line-height: normal;
 }
 
+.main-page-hero-banner  .search-input ::placeholder {
+  color: var(--text-placeholder, #B5B5B5);
+  text-align: center;
+
+  /* body-2 */
+  font-family: Outfit;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
 
 .user-connect-wallet-button-desktop {
   color: var(--text-on-colour, #FFF);

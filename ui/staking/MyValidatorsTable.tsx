@@ -1025,6 +1025,7 @@ const TableWrapper = ({
                 totalCount={ totalCount }
                 fetcher = { () => {
                     callback && callback();
+                    requestDelegatorsInfo();
                 } }
                 currentPage={ currentPage }
                 handleStake={ handleStake }

@@ -11,7 +11,7 @@ services:
       - 3002:3002
     environment:
       ENVS_PRESET: "me"
-      NEXT_PUBLIC_APP_HOST: i-testnet-scan.mechain.tech
+      NEXT_PUBLIC_APP_HOST: i-testnet-scan.mocachain.org
       # NEXT_PUBLIC_SESSION_PASSWORD: 
     # entrypoint: /bin/bash
     volumes:

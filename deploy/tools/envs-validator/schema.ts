@@ -577,7 +577,7 @@ const schema = yup
     // II. Run-time ENVs
     // -----------------
     // 1. App configuration
-    NEXT_PUBLIC_APP_HOST: yup.string().required(),
+    NEXT_PUBLIC_APP_HOST: yup.string(),
     NEXT_PUBLIC_APP_PROTOCOL: yup.string().oneOf(protocols),
     NEXT_PUBLIC_APP_PORT: yup.number().positive().integer(),
     NEXT_PUBLIC_APP_ENV: yup.string(),

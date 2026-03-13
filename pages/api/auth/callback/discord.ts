@@ -17,11 +17,12 @@ async function getResponseJson(rp: Response) {
   }
 }
 
-async function getAccessToken(code: string) {
+async function getAccessToken(code: string, reqHost: string) {
   const clientId = getEnvValue('NEXT_PUBLIC_DISCORD_CLIENT_ID');
   const clientSecret = getEnvValue('NEXT_PUBLIC_DISCORD_CLIENT_SECRET');
   const encodedCredentials = btoa(`${ clientId }:${ clientSecret }`);
-  const redirectUri = `${ getEnvValue('NEXT_PUBLIC_API_PROTOCOL') }://${ getEnvValue('NEXT_PUBLIC_API_HOST') }/api/auth/callback/discord`;
+  const protocol = getEnvValue('NEXT_PUBLIC_API_PROTOCOL') || 'https';
+  const redirectUri = `${ protocol }://${ reqHost }/api/auth/callback/discord`;
 
   const rp = await fetch('https://discord.com/api/v10/oauth2/token', {
     method: 'POST',
@@ -100,7 +101,7 @@ export default async function discordCallbackHandler(req: NextApiRequest, res: N
   const session = await getIronSession<{ user: any }>(req, res, sessionOptions);
 
   try {
-    const tokenResults = await getAccessToken(code);
+    const tokenResults = await getAccessToken(code, req.headers.host || getEnvValue('NEXT_PUBLIC_API_HOST') || '');
     const userResults = await getUserProfile(tokenResults.access_token);
     // await joinGuild(tokenResults.access_token, userResults.id);
 

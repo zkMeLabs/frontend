@@ -81,7 +81,7 @@ const AddressBalance = ({ data, isLoading }: Props) => {
           decimals={ String(config.chain.currency.decimals) }
           currency={ currencyUnits.ether }
           accuracyUsd={ 2 }
-          accuracy={ 8 }
+          accuracy={ 18 }
           flexWrap="wrap"
           isLoading={ isLoading }
         />

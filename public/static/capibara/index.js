@@ -757,7 +757,7 @@
 
           this.stop();
           this.crashed = true;
-          this.distanceMeter.acheivement = false;
+          this.distanceMeter.achievement = false;
 
           this.tRex.update(100, Trex.status.CRASHED);
 
@@ -1806,7 +1806,7 @@
       this.container = null;
 
       this.digits = [];
-      this.acheivement = false;
+      this.achievement = false;
       this.defaultString = '';
       this.flashTimer = 0;
       this.flashIterations = 0;
@@ -1946,12 +1946,12 @@
        * Update the distance meter.
        * @param {number} distance
        * @param {number} deltaTime
-       * @return {boolean} Whether the acheivement sound fx should be played.
+       * @return {boolean} Whether the achievement sound fx should be played.
        */
       update: function (deltaTime, distance) {
           var paint = true;
 
-          if (!this.acheivement) {
+          if (!this.achievement) {
               distance = this.getActualDistance(distance);
               // Score has gone beyond the initial digit count.
               if (distance > this.maxScore && this.maxScoreUnits ==
@@ -1963,10 +1963,10 @@
               }
 
               if (distance > 0) {
-                  // Acheivement unlocked
+                  // Achievement unlocked
                   if (distance % this.config.ACHIEVEMENT_DISTANCE == 0) {
                       // Flash score and play sound.
-                      this.acheivement = true;
+                      this.achievement = true;
                       this.flashTimer = 0;
                     //   playSound = true;
                   }
@@ -1979,7 +1979,7 @@
                   this.digits = this.defaultString.split('');
               }
           } else {
-              // Control flashing of the score on reaching acheivement.
+              // Control flashing of the score on reaching achievement.
               if (this.flashIterations <= this.config.FLASH_ITERATIONS) {
                   this.flashTimer += deltaTime;
 
@@ -1991,7 +1991,7 @@
                       this.flashIterations++;
                   }
               } else {
-                  this.acheivement = false;
+                  this.achievement = false;
                   this.flashIterations = 0;
                   this.flashTimer = 0;
               }
@@ -2038,7 +2038,7 @@
        */
       reset: function () {
           this.update(0);
-          this.acheivement = false;
+          this.achievement = false;
       }
   };
 
